@@ -1,6 +1,7 @@
 import flet as ft
 from alert import AlertManager
 from autonoleggio import Autonoleggio
+from automobile import Automobile
 
 FILE_AUTO = "automobili.csv"
 
@@ -37,6 +38,32 @@ def main(page: ft.Page):
 
     # Tutti i TextField per le info necessarie per aggiungere una nuova automobile (marca, modello, anno, contatore posti)
     # TODO
+    input_marca = ft.TextField(value = "Marca", label="Marca")
+    input_modello = ft.TextField(value = "Modello", label="Modello")
+    input_anno = ft.TextField(value = "Anno", label="Anno")
+
+    def handleAdd(e):
+        currentVal = txtOut.value
+        txtOut.value = currentVal + 1
+        txtOut.update()
+
+    def handleRemove(e):
+        currentVal = txtOut.value
+        txtOut.value = currentVal - 1
+        txtOut.update()
+
+    btnMinus = ft.IconButton(icon=ft.Icons.REMOVE,
+                             icon_color="red",
+                             icon_size=24, on_click=handleRemove)
+    btnAdd = ft.IconButton(icon=ft.Icons.ADD,
+                           icon_color="green",
+                           icon_size=24, on_click=handleAdd)
+    txtOut = ft.TextField(width=100, disabled=True,
+                          value=0, border_color="green",
+                          text_align=ft.TextAlign.CENTER)
+
+    button = ft.Row([btnMinus, txtOut, btnAdd],
+                  alignment=ft.MainAxisAlignment.CENTER)
 
     # --- FUNZIONI APP ---
     def aggiorna_lista_auto():
@@ -59,6 +86,17 @@ def main(page: ft.Page):
 
     # Handlers per la gestione dei bottoni utili all'inserimento di una nuova auto
     # TODO
+    def aggiorna_auto(e):
+        try:
+            auto = autonoleggio.aggiungi_automobile(input_marca.value, input_modello.value, input_anno.value, txtOut.value)
+            stato = "✅"
+            if int(txtOut.value) <1:
+                alert.show_alert(f"❌ Errore: numero posti minore di 1")
+            lista_auto.controls.append(ft.Text(f"{stato} {auto}"))
+            page.update()
+        except Exception as e:
+            alert.show_alert(f"❌ Errore: inserire un valore numerico per anno")
+
 
     # --- EVENTI ---
     toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=cambia_tema)
@@ -66,6 +104,8 @@ def main(page: ft.Page):
 
     # Bottoni per la gestione dell'inserimento di una nuova auto
     # TODO
+    pulsante_conferma_auto = ft.ElevatedButton("Aggiungi automobile", on_click=aggiorna_auto)
+
 
     # --- LAYOUT ---
     page.add(
@@ -84,6 +124,14 @@ def main(page: ft.Page):
 
         # Sezione 3
         # TODO
+        ft.Divider(),
+        ft.Text("Aggiungi nuova automobile", size=20),
+        ft.Row(spacing=5,
+               controls = [input_marca,input_modello,input_anno,button],
+               alignment = ft.MainAxisAlignment.CENTER),
+        ft.Row(spacing = 200,
+               controls = [pulsante_conferma_auto],
+               alignment = ft.MainAxisAlignment.CENTER),
 
         # Sezione 4
         ft.Divider(),
