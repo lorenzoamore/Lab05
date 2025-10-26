@@ -92,8 +92,9 @@ def main(page: ft.Page):
             stato = "✅"
             if int(txtOut.value) <1:
                 alert.show_alert(f"❌ Errore: numero posti minore di 1")
-            lista_auto.controls.append(ft.Text(f"{stato} {auto}"))
-            page.update()
+            else:
+                lista_auto.controls.append(ft.Text(f"{stato} {auto}"))
+                page.update()
         except Exception as e:
             alert.show_alert(f"❌ Errore: inserire un valore numerico per anno")
 
